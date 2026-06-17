@@ -1,0 +1,30 @@
+name: Generate Vendor Zip
+
+on:
+  workflow_dispatch: # 允许你手动点击按钮运行
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1' # 如果你的虚拟主机是PHP 8.2，这里可以改成 8.2
+
+    - name: Install Dependencies
+      run: |
+        composer install --no-dev --ignore-platform-reqs
+
+    - name: Zip Vendor Folder
+      run: zip -r vendor.zip vendor/
+
+    - name: Upload Vendor Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: php-vendor-package
+        path: vendor.zip
